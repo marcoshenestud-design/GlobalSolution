@@ -51,5 +51,3 @@ O projeto foi construído utilizando os recursos fundamentais e nativos do Pytho
 ```bash
 python src/sistema.py
 
-
-assim tá bom?
