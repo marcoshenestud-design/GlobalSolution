@@ -1,8 +1,6 @@
-# Sistema de Monitoramento Espacial - Global Solution
-
 from collections import deque
 
-# status binário - 1=ativo, 0=falha
+# 1=ativo, 0=falha
 modulos = {
     "suporte_vida": 1,
     "energia": 1,
@@ -143,8 +141,8 @@ com_fraca = (
 
 # Radiação
 
-rad_critica = radiacao > 3.0
-rad_alerta = 2.0 < radiacao <= 3.0
+rad_critica = radiacao > 4.0
+rad_alerta = 2.0 < radiacao <= 4.0
 
 # Previsão
 
@@ -227,6 +225,18 @@ if not modulos["suporte_vida"]:
             "suporte_vida",
             "Módulo de suporte à vida INATIVO!",
             "EMERGÊNCIA MÁXIMA — ativar sistemas redundantes."
+        )
+    )
+
+# Energia
+
+if not modulos["energia"]:
+    alertas.append(
+        (
+            "CRITICO",
+            "energia",
+            "Módulo de energia INATIVO!",
+            "Ativar sistema de energia de emergência."
         )
     )
 
@@ -397,37 +407,8 @@ for i, (sev, mod, msg, acao) in enumerate(alertas, 1):
 
     print(f"{i}. {sev} - {mod.upper()}")
 
-    if mod == "energia":
-
-        print(f"   Reserva atual: {reserva_atual}%")
-        print(f"   Consumo      : {consumo_atual} kWh")
-        print(f"   Geração      : {geracao_atual} kWh")
-
-    elif mod == "comunicacao":
-
-        print("   Módulo inativo.")
-        print(f"   Qualidade do sinal: {qualidade_com}%")
-
-    elif mod == "radiacao":
-
-        print(f"   Nível atual: {radiacao} mSv/h")
-
-    print("   Ação:")
-
-    if mod == "energia":
-
-        print("   - Desligar laboratório.")
-        print("   - Desativar sistemas não essenciais.")
-
-    elif mod == "comunicacao":
-
-        print("   - Ativar antena de backup.")
-        print("   - Iniciar protocolo de emergência.")
-
-    elif mod == "radiacao":
-
-        print("   - Evacuar áreas externas.")
-        print("   - Ativar blindagem do habitat.")
+    print(f"   Problema: {msg}")
+    print(f"   Ação    : {acao}")
 
     print()
 
@@ -445,7 +426,16 @@ print(LIN)
 print(f"Alertas Totais    : {len(alertas)}")
 print(f"Alertas Críticos  : {total_criticos}")
 print(f"Reserva de Energia: {reserva_atual}%")
-print(f"Comunicação       : {'Inativa' if com_falha else 'Ativa'}")
+
+if com_falha:
+    estado_com = "Inativa"
+elif com_fraca:
+    estado_com = "Fraca"
+else:
+    estado_com = "Ativa"
+
+print(f"Comunicação       : {estado_com}")
+
 print(f"Radiação          : {radiacao} mSv/h")
 print(f"Estado Geral      : {status}")
 
