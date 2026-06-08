@@ -10,7 +10,7 @@ modulos = {
     "armazenamento": 1,
 }
 
-# Matriz: [geração kWh, consumo kWh, reserva %]
+# matriz: [geração kWh, consumo kWh, reserva %]
 horarios = ["06:00", "09:00", "12:00", "15:00", "18:00", "21:00"]
 
 matriz_energia = [
@@ -22,12 +22,12 @@ matriz_energia = [
     [12, 94, 22]
 ]
 
-# Extração dos dados
+# extração dos dados
 reservas = [linha[2] for linha in matriz_energia]
 geracoes = [linha[0] for linha in matriz_energia]
 consumos = [linha[1] for linha in matriz_energia]
 
-# Ambiente
+# ambiente
 ambiente = {
     "temperatura_interna": 21.5,
     "radiacao_mSv": 3.8,
@@ -35,7 +35,7 @@ ambiente = {
     "pressao_interna": 101.2
 }
 
-# Log de eventos
+# log de eventos
 log_eventos = [
     ("04:12", "INFO", "Sistema inicializado — ciclo 14"),
     ("06:30", "ALERTA", "Qualidade de comunicação caiu para 60%"),
@@ -47,9 +47,7 @@ log_eventos = [
     ("20:00", "INFO", "Modo de economia de energia ativado"),
 ]
 
-# ==================================================
 # FILA E PILHA
-# ==================================================
 
 fila_alertas = deque(
     e for e in log_eventos
@@ -61,9 +59,7 @@ pilha_criticos = [
     if e[1] in ("CRITICO", "FALHA")
 ]
 
-# ==================================================
 # ANOMALIAS
-# ==================================================
 
 anomalias = []
 
@@ -73,9 +69,7 @@ for evento in log_eventos:
     if "-999" in descricao:
         anomalias.append(evento)
 
-# ==================================================
 # REGRESSÃO LINEAR
-# ==================================================
 
 def regressao_linear(ys):
     n = len(ys)
@@ -104,9 +98,7 @@ previsoes = [
     for i in range(6, 9)
 ]
 
-# ==================================================
 # REGRAS DE DIAGNÓSTICO
-# ==================================================
 
 reserva_atual = reservas[-1]
 consumo_atual = consumos[-1]
@@ -246,9 +238,7 @@ alertas.sort(
     key=lambda x: 0 if x[0] == "CRITICO" else 1
 )
 
-# ==================================================
 # STATUS GERAL
-# ==================================================
 
 if any(a[0] == "CRITICO" for a in alertas):
     status = "CRITICO"
@@ -258,9 +248,7 @@ elif any(a[0] == "ALERTA" for a in alertas):
 
 else:
     status = "NORMAL"
-# ==================================================
 # EXIBIÇÃO
-# ==================================================
 
 SEP = "=" * 58
 LIN = "-" * 58
