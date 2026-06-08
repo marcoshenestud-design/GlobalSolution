@@ -248,7 +248,6 @@ elif any(a[0] == "ALERTA" for a in alertas):
 
 else:
     status = "NORMAL"
-
 # ==================================================
 # EXIBIÇÃO
 # ==================================================
@@ -256,112 +255,200 @@ else:
 SEP = "=" * 58
 LIN = "-" * 58
 
-print("ARES-7 - MONITORAMENTO OPERACIONAL | Ciclo 14")
+print(SEP)
+print("ARES-7 - MONITORAMENTO OPERACIONAL | CICLO 14")
 print(SEP)
 
-print("\n[ MÓDULOS ]")
+# MÓDULOS
 
-for nome, s in modulos.items():
+print("\n[MÓDULOS]")
+print(LIN)
 
-    cond = "OK" if s else "FALHA"
+nomes_modulos = {
+    "suporte_vida": "Suporte à Vida",
+    "energia": "Energia",
+    "comunicacao": "Comunicação",
+    "habitat": "Habitat",
+    "laboratorio": "Laboratório",
+    "armazenamento": "Armazenamento"
+}
+
+for chave, valor in modulos.items():
+
+    status_mod = "OK" if valor else "FALHA"
+    estado = "Ativo" if valor else "Inativo"
 
     print(
-        f"  {nome:<20} "
-        f"[{cond:^5}] "
-        f"{'Ativo' if s else 'INATIVO'}"
+        f"{nomes_modulos[chave]:<18}: "
+        f"{status_mod:<7} | {estado}"
     )
 
-print("\n[ ENERGIA — kWh / Reserva % ]")
+# ENERGIA
+
+print("\n[ENERGIA - kWh / RESERVA]")
+print(LIN)
 
 print(
-    f"  {'Hora':<6}"
-    f"{'Gera':>8}"
-    f"{'Cons':>8}"
-    f"{'Res%':>8}"
-    f"{'Saldo':>8}"
+    f"{'Hora':<8}"
+    f"{'Geração':>10}"
+    f"{'Consumo':>10}"
+    f"{'Reserva':>10}"
+    f"{'Saldo':>9}"
 )
 
-for i, h in enumerate(horarios):
+print(LIN)
+
+for i, hora in enumerate(horarios):
 
     g, c, r = matriz_energia[i]
-
     saldo = g - c
 
     print(
-        f"  {h:<6}"
-        f"{g:>8}"
-        f"{c:>8}"
-        f"{r:>7}%"
-        f"{saldo:>8}"
+        f"{hora:<8}"
+        f"{g:>10}"
+        f"{c:>10}"
+        f"{str(r)+'%':>10}"
+        f"{saldo:>+9}"
     )
 
-print("\n[ AMBIENTE ]")
+# AMBIENTE
 
-for chave, valor in ambiente.items():
-    print(f"  {chave:<28} {valor}")
+print("\n[AMBIENTE]")
+print(LIN)
+
+print(f"Temperatura Interna    : {ambiente['temperatura_interna']} °C")
+print(f"Radiação               : {ambiente['radiacao_mSv']} mSv/h")
+print(f"Qualidade Comunicação  : {ambiente['qualidade_comunicacao']}%")
+print(f"Pressão Interna        : {ambiente['pressao_interna']} kPa")
+
+# ANOMALIA
 
 if anomalias:
 
-    print("\n[ ANOMALIA DETECTADA ]")
+    print("\n[ANOMALIA DETECTADA]")
+    print(LIN)
 
-    for a in anomalias:
-        print(f"  {a[0]} - {a[2]}")
+    for hora, tipo, descricao in anomalias:
+        print(f"{hora} - {descricao}")
 
-print("\n[ LOG DE EVENTOS ]")
+# LOG
 
-for hora, tipo, desc in log_eventos:
+print("\n[LOG DE EVENTOS]")
+print(LIN)
 
-    flag = " <<< ANOMALIA" if "-999" in desc else ""
+for hora, tipo, descricao in log_eventos:
 
     print(
-        f"  {hora} "
-        f"[{tipo:<7}] "
-        f"{desc}{flag}"
+        f"{hora} "
+        f"[{tipo:<8}] "
+        f"{descricao}"
     )
 
-print("\n[ FILA DE ALERTAS PENDENTES - FIFO ]")
+# FILA
 
-for i, (h, t, d) in enumerate(fila_alertas, 1):
-    print(f"  {i}. {h} [{t}] {d}")
-
-print("\n[ PILHA DE CRÍTICOS - topo = mais recente ]")
-
-for i, (h, t, d) in enumerate(reversed(pilha_criticos)):
-
-    marcador = "[TOPO]" if i == 0 else "      "
-
-    print(f"  {marcador} {h} [{t}] {d}")
-
-print("\n[ PREVISÃO - REGRESSÃO LINEAR DA RESERVA ]")
-
-print(f"  Dados históricos: {reservas}")
-print(f"  Modelo: y = {incl:.2f}x + {base:.2f}")
-
-for i, p in enumerate(previsoes, 1):
-    print(f"  Ciclo +{i}: {p}%")
-
-print(f"\n[ DIAGNÓSTICO GERAL: *** {status} *** ]")
-
+print("\n[FILA DE ALERTAS PENDENTES - FIFO]")
 print(LIN)
 
-for idx, (sev, mod, msg, acao) in enumerate(alertas, 1):
+for i, (hora, tipo, descricao) in enumerate(fila_alertas, 1):
 
-    icone = "[!!!]" if sev == "CRITICO" else "[ ! ]"
+    print(
+        f"{i}. {hora} "
+        f"[{tipo:<7}] "
+        f"{descricao}"
+    )
 
-    print(f"  {idx}. {icone} {sev} - {mod}")
-    print(f"     {msg}")
-    print(f"     Ação: {acao}")
+# PILHA
 
+print("\n[PILHA DE CRÍTICOS - TOPO = MAIS RECENTE]")
 print(LIN)
+
+print("[TOPO]")
+
+for hora, tipo, descricao in reversed(pilha_criticos):
+
+    print(
+        f"{hora} "
+        f"[{tipo:<8}] "
+        f"{descricao}"
+    )
+
+# PREVISÃO
+
+print("\n[PREVISÃO - REGRESSÃO LINEAR DA RESERVA]")
+print(LIN)
+
+print("Dados históricos:")
+print(reservas)
+
+print("\nModelo:")
+print(f"y = {incl:.2f}x + {base:.2f}")
+
+print("\nPrevisão:")
+
+for i, valor in enumerate(previsoes, 1):
+    print(f"Ciclo +{i} : {valor}%")
+
+# DIAGNÓSTICO
+
+print("\n[DIAGNÓSTICO GERAL]")
+print(LIN)
+
+for i, (sev, mod, msg, acao) in enumerate(alertas, 1):
+
+    print(f"{i}. {sev} - {mod.upper()}")
+
+    if mod == "energia":
+
+        print(f"   Reserva atual: {reserva_atual}%")
+        print(f"   Consumo      : {consumo_atual} kWh")
+        print(f"   Geração      : {geracao_atual} kWh")
+
+    elif mod == "comunicacao":
+
+        print("   Módulo inativo.")
+        print(f"   Qualidade do sinal: {qualidade_com}%")
+
+    elif mod == "radiacao":
+
+        print(f"   Nível atual: {radiacao} mSv/h")
+
+    print("   Ação:")
+
+    if mod == "energia":
+
+        print("   - Desligar laboratório.")
+        print("   - Desativar sistemas não essenciais.")
+
+    elif mod == "comunicacao":
+
+        print("   - Ativar antena de backup.")
+        print("   - Iniciar protocolo de emergência.")
+
+    elif mod == "radiacao":
+
+        print("   - Evacuar áreas externas.")
+        print("   - Ativar blindagem do habitat.")
+
+    print()
+
+# RESUMO
 
 total_criticos = sum(
-    1 for a in alertas
-    if a[0] == "CRITICO"
+    1 for alerta in alertas
+    if alerta[0] == "CRITICO"
 )
 
-print(
-    f"  Total: {len(alertas)} alertas "
-    f"({total_criticos} críticos)"
-)
+print(LIN)
+print("RESUMO")
+print(LIN)
 
+print(f"Alertas Totais    : {len(alertas)}")
+print(f"Alertas Críticos  : {total_criticos}")
+print(f"Reserva de Energia: {reserva_atual}%")
+print(f"Comunicação       : {'Inativa' if com_falha else 'Ativa'}")
+print(f"Radiação          : {radiacao} mSv/h")
+print(f"Estado Geral      : {status}")
+
+print("\n" + SEP)
+print("FIM DO RELATÓRIO")
 print(SEP)
