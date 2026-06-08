@@ -36,9 +36,7 @@ Para garantir performance algorítmica e conformidade com as boas práticas de C
 O motor de inferência do sistema utiliza condicionais aninhadas (if, elif, else) acopladas a operadores lógicos (AND, OR, NOT).
 
 ### A Expressão Booleana Principal
-A regra mais crítica do sistema monitora a iminência de um apagão total através da combinação de capacidade atual e balanço energético:
-
-$$\text{energia\_critica} = (\text{reserva\_atual} < 25) \land (\text{consumo\_atual} > \text{geracao\_atual})$$
+A regra mais crítica do sistema monitora a iminência de um apagão total através da combinação de capacidade atual e balanço energético.
 
 ---
 
