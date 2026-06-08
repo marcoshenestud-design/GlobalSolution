@@ -44,28 +44,12 @@ A regra mais crítica do sistema monitora a iminência de um apagão total atrav
 
 $$\text{energia\_critica} = (\text{reserva\_atual} < 25) \land (\text{consumo\_atual} > \text{geracao\_atual})$$
 
-### Justificativa Operacional das Regras
-* **Regra de Energia:** Caso a energia atual seja crítica **OU** a previsão matemática indique colapso iminente (`prev_critica`), o sistema gera um alerta emergencial ordenando o desligamento imediato do Laboratório (maior consumidor não vital).
-* **Regra de Comunicação:** Acionada se o hardware falhar (`modulo == 0`) **OU** se a qualidade de sinal cair abaixo do limiar de segurança de $40\%$.
-* **Regra de Suporte à Vida:** Monitorada com operador unário `not`. Sendo o sistema vital da estação, qualquer retorno falso gera o nível máximo de prioridade de evacuação.
-
 ---
 
 ## 5. Técnica de Previsão Utilizada e Resultados
 
-Para antecipar crises e não apenas reagir a elas, implementamos de forma nativa (sem o uso de bibliotecas externas como Numpy ou Pandas) o algoritmo de **Regressão Linear Simples por Mínimos Quadrados** para modelar o comportamento da reserva das baterias.
+Para antecipar crises e não apenas reagir a elas, implementamos de forma nativa o algoritmo de **Regressão Linear Simples por Mínimos Quadrados** para modelar o comportamento da reserva das baterias.
 
 A função mapeia o tempo decorrido ($x$) em relação ao percentual de carga restante ($y$):
 
 $$y = ax + b$$
-
-### Análise do Modelo no Ciclo 14
-* **Equação Gerada:** $y = -10.03x + 82.24$
-* **Interpretação:** O coeficiente angular negativo ($a \approx -10.03$) prova que a estação está consumindo cerca de $10\%$ de sua reserva total de energia a cada intervalo de tempo analisado.
-* **Previsões Calculadas para os Próximos Ciclos:**
-    * Ciclo +1: `22.1%`
-    * Ciclo +2: `12.0%` !!! *(Abaixo do limite de segurança de 15%)*
-    * Ciclo +3: `2.0%` !!! *(Colapso total)*
-* **Influência na Decisão:** Como o modelo previu que a energia cairá para níveis perigosos nos próximos passos, o sistema força o estado de diagnóstico global para **CRÍTICO**, ativando defesas preventivas antes mesmo que a bateria acabe.
-
----
