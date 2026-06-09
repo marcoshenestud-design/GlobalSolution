@@ -1,6 +1,7 @@
 from collections import deque
 
-# 1=ativo, 0=falha
+#estrutura de dados
+
 modulos = {
     "suporte_vida": 1,
     "energia": 1,
@@ -9,7 +10,8 @@ modulos = {
     "laboratorio": 1,
     "armazenamento": 1,
 }
-# matriz: [geração kWh, consumo kWh, reserva %]
+
+#matriz
 horarios = ["06:00", "09:00", "12:00", "15:00", "18:00", "21:00"]
 matriz_energia = [
     [45, 38, 72],
@@ -19,10 +21,12 @@ matriz_energia = [
     [30, 91, 38],
     [12, 94, 22]
 ]
+
 # extração dos dados
 reservas = [linha[2] for linha in matriz_energia]
 geracoes = [linha[0] for linha in matriz_energia]
 consumos = [linha[1] for linha in matriz_energia]
+
 # ambiente
 ambiente = {
     "temperatura_interna": 21.5,
@@ -41,12 +45,14 @@ log_eventos = [
     ("18:10", "FALHA", "Sensor de comunicação: leitura inválida -999%"),
     ("20:00", "INFO", "Modo de economia de energia ativado"),
 ]
-# FILA E PILHA
+
+# fila
 fila_alertas = deque(
     e for e in log_eventos
     if e[1] in ("ALERTA", "CRITICO", "FALHA")
 )
 
+# pilha
 pilha_criticos = [
     e for e in log_eventos
     if e[1] in ("CRITICO", "FALHA")

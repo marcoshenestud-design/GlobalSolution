@@ -50,4 +50,9 @@ O projeto foi construído utilizando os recursos fundamentais e nativos do Pytho
 
 ```bash
 python src/sistema.py
+```
 
+## 6. Links
+
+Link do GitHub: https://github.com/marcoshenestud-design/GlobalSolution 
+Link do Vídeo: https://www.youtube.com/watch?v=9mMsZ6K1qXc 
