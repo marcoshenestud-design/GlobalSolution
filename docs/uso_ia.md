@@ -1,0 +1,1 @@
+Foi utlizado IA para: Revisar conteúdos ensinados nas fases anteriores (Regressão Linear), para gerar dados em arquivo csv utilizado no trabalhoe organizar ideias para a contrução do vídeo (incluindo imagens utilizadas no vídeo) e PDF.
