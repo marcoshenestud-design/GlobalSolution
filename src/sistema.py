@@ -9,10 +9,8 @@ modulos = {
     "laboratorio": 1,
     "armazenamento": 1,
 }
-
 # matriz: [geração kWh, consumo kWh, reserva %]
 horarios = ["06:00", "09:00", "12:00", "15:00", "18:00", "21:00"]
-
 matriz_energia = [
     [45, 38, 72],
     [62, 55, 74],
@@ -21,12 +19,10 @@ matriz_energia = [
     [30, 91, 38],
     [12, 94, 22]
 ]
-
 # extração dos dados
 reservas = [linha[2] for linha in matriz_energia]
 geracoes = [linha[0] for linha in matriz_energia]
 consumos = [linha[1] for linha in matriz_energia]
-
 # ambiente
 ambiente = {
     "temperatura_interna": 21.5,
@@ -34,7 +30,6 @@ ambiente = {
     "qualidade_comunicacao": 34,
     "pressao_interna": 101.2
 }
-
 # log de eventos
 log_eventos = [
     ("04:12", "INFO", "Sistema inicializado — ciclo 14"),
@@ -46,9 +41,7 @@ log_eventos = [
     ("18:10", "FALHA", "Sensor de comunicação: leitura inválida -999%"),
     ("20:00", "INFO", "Modo de economia de energia ativado"),
 ]
-
 # FILA E PILHA
-
 fila_alertas = deque(
     e for e in log_eventos
     if e[1] in ("ALERTA", "CRITICO", "FALHA")
@@ -58,7 +51,6 @@ pilha_criticos = [
     e for e in log_eventos
     if e[1] in ("CRITICO", "FALHA")
 ]
-
 # ANOMALIAS
 
 anomalias = []
@@ -68,7 +60,6 @@ for evento in log_eventos:
 
     if "-999" in descricao:
         anomalias.append(evento)
-
 # REGRESSÃO LINEAR
 
 def regressao_linear(ys):
@@ -97,7 +88,6 @@ previsoes = [
     round(max(0, incl * i + base), 1)
     for i in range(6, 9)
 ]
-
 # REGRAS DE DIAGNÓSTICO
 
 reserva_atual = reservas[-1]
@@ -118,7 +108,6 @@ energia_baixa = (
     reserva_atual < 50
     and not energia_critica
 )
-
 # Comunicação
 
 com_falha = (
@@ -130,20 +119,16 @@ com_fraca = (
     40 <= qualidade_com < 60
     and not com_falha
 )
-
 # Radiação
 
 rad_critica = radiacao > 4.0
 rad_alerta = 2.0 < radiacao <= 4.0
-
 # Previsão
 
 prev_critica = any(p < 15 for p in previsoes)
 
 alertas = []
-
 # Energia
-
 if energia_critica or prev_critica:
     alertas.append(
         (
@@ -163,9 +148,7 @@ elif energia_baixa:
             "Reduzir uso de sistemas secundários."
         )
     )
-
 # Comunicação
-
 if com_falha:
     alertas.append(
         (
@@ -175,7 +158,6 @@ if com_falha:
             "Ativar antena de backup e protocolo de emergência."
         )
     )
-
 elif com_fraca:
     alertas.append(
         (
@@ -185,9 +167,7 @@ elif com_fraca:
             "Reposicionar antena principal."
         )
     )
-
 # Radiação
-
 if rad_critica:
     alertas.append(
         (
@@ -197,7 +177,6 @@ if rad_critica:
             "Evacuar áreas externas. Ativar blindagem do habitat."
         )
     )
-
 elif rad_alerta:
     alertas.append(
         (
@@ -207,9 +186,7 @@ elif rad_alerta:
             "Monitorar e preparar evacuação."
         )
     )
-
 # Suporte à vida
-
 if not modulos["suporte_vida"]:
     alertas.append(
         (
@@ -219,9 +196,7 @@ if not modulos["suporte_vida"]:
             "EMERGÊNCIA MÁXIMA — ativar sistemas redundantes."
         )
     )
-
 # Energia
-
 if not modulos["energia"]:
     alertas.append(
         (
@@ -231,13 +206,10 @@ if not modulos["energia"]:
             "Ativar sistema de energia de emergência."
         )
     )
-
 # Ordenação
-
 alertas.sort(
     key=lambda x: 0 if x[0] == "CRITICO" else 1
 )
-
 # STATUS GERAL
 
 if any(a[0] == "CRITICO" for a in alertas):
@@ -249,13 +221,8 @@ elif any(a[0] == "ALERTA" for a in alertas):
 else:
     status = "NORMAL"
 # EXIBIÇÃO
-
 SEP = "=" * 58
 LIN = "-" * 58
-
-print(SEP)
-print("ARES-7 - MONITORAMENTO OPERACIONAL | CICLO 14")
-print(SEP)
 
 # MÓDULOS
 
@@ -282,7 +249,6 @@ for chave, valor in modulos.items():
     )
 
 # ENERGIA
-
 print("\n[ENERGIA - kWh / RESERVA]")
 print(LIN)
 
@@ -426,7 +392,3 @@ print(f"Comunicação       : {estado_com}")
 
 print(f"Radiação          : {radiacao} mSv/h")
 print(f"Estado Geral      : {status}")
-
-print("\n" + SEP)
-print("FIM DO RELATÓRIO")
-print(SEP)
